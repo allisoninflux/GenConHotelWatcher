@@ -58,7 +58,7 @@ namespace Gen_Con_Hotel_Watch
 
         private List<Email> GetEmailInfo()
         {
-            List<Email> emails = null;
+            List<Email> emails = new List<Email>();
             List<Control> comboBoxSMTPArray = FindControlsByName("comboBoxSMTP");
             List<Control> textBoxEmailFromArray = FindControlsByName("textBoxEmailFrom");
             List<Control> maskedTextBoxPasswordArray = FindControlsByName("maskedTextBoxPassword");

@@ -14,11 +14,9 @@
  *  You should have received a copy of the GNU General Public License
  *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-using System.Collections;
-
 namespace Gen_Con_Hotel_Watch.Hotels.Info
 {
-    public class Data : IEnumerable
+    public class Data
     {
         public string Name { get; set; }
         public bool Parking { get; set; }
@@ -30,19 +28,5 @@ namespace Gen_Con_Hotel_Watch.Hotels.Info
             this.Parking = Parking;
             this.Breakfast = Breakfast;
         }
-
-        IEnumerator IEnumerable.GetEnumerator()
-        {
-            return GetEnumerator();
-        }
-
-        public IEnumerator GetEnumerator()
-        {
-            foreach (Data item in this)
-            {
-                yield return item;
-            }
-        }
-
     }
 }

@@ -14,27 +14,13 @@
  *  You should have received a copy of the GNU General Public License
  *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-using System.Collections;
-
 namespace Gen_Con_Hotel_Watch.Notifications
 {
-    public class Email : IEnumerable
+    public class Email
     {
         public string Smtp { get; set; }
         public string From { get; set; }
         public string Pword { get; set; }
         public string To { get; set; }
-
-        IEnumerator IEnumerable.GetEnumerator()
-        {
-            return GetEnumerator();
-        }
-        public IEnumerator GetEnumerator()
-        {
-            foreach (Email item in this)
-            {
-                yield return item;
-            }
-        }
     }
 }

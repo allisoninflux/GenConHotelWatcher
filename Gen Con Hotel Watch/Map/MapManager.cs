@@ -134,10 +134,10 @@ namespace Gen_Con_Hotel_Watch.Map
         public int ZoomIn()
         {
             int zoomValue = -1;
-            if (map.Zoom != map.MinZoom)
+            if (map.Zoom != map.MaxZoom)
             {
                 double prevZoom = map.Zoom;
-                map.Zoom = prevZoom - 1;
+                map.Zoom = prevZoom + 1;
                 zoomValue = (int)map.Zoom - map.MinZoom;
             }
             return zoomValue;
@@ -148,7 +148,7 @@ namespace Gen_Con_Hotel_Watch.Map
             if (map.Zoom != map.MinZoom)
             {
                 double prevZoom = map.Zoom;
-                map.Zoom = prevZoom + 1;
+                map.Zoom = prevZoom - 1;
                 zoomValue = (int)map.Zoom - map.MinZoom;
             }
             return zoomValue;

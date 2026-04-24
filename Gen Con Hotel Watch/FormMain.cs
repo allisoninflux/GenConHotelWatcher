@@ -88,7 +88,7 @@ namespace Gen_Con_Hotel_Watch
         {
             DateTime CheckInDate = monthCalendarSelection.SelectionStart;
             DateTime CheckOutDate = monthCalendarSelection.SelectionEnd;
-            if ((CheckInDate > FirstNightAvailable) | (CheckOutDate < LastNightAvailable))
+            if ((CheckInDate > FirstNightAvailable) || (CheckOutDate < LastNightAvailable))
             {
                 string message = String.Format("{0} is the latest available check in date and \r" +
                     "{1} is the earliest available check out.\r" +
@@ -117,7 +117,7 @@ namespace Gen_Con_Hotel_Watch
 
         private bool VerifyKey(string key)
         {
-            if (key != null || key == "")
+            if (string.IsNullOrEmpty(key))
             {
                 MessageBox.Show("Please enter your hotel access key.");
                 return false;
@@ -137,8 +137,24 @@ namespace Gen_Con_Hotel_Watch
             ClearForm();
 
             HotelFilter filter = GetHotelFilter();
+            if (filter == null) return;
 
-            vacancies = await Scraper.FindHotels(key, filter);
+            try
+            {
+                vacancies = await Scraper.FindHotels(key, filter);
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("Error searching hotels: " + ex.Message);
+                EnableControls();
+                return;
+            }
+
+            if (vacancies == null || vacancies.Count == 0)
+            {
+                MessageBox.Show("No hotels found or the connection failed.");
+                return;
+            }
 
             AddHotelsToDisplay(vacancies);
 
@@ -238,9 +254,10 @@ namespace Gen_Con_Hotel_Watch
 
                 float latitude = (float)position.Lat;
                 float longitude = (float)position.Lng;
-                Hotel foundHotel = vacancies.Single(x => x.Latitude == latitude && x.Longitude == longitude);
+                Hotel foundHotel = vacancies.SingleOrDefault(x => x.Latitude == latitude && x.Longitude == longitude);
+                if (foundHotel == null) return;
                 ListViewItem[] sel = listViewHotels.Items.Find(foundHotel.Name, false);
-                if (sel != null)
+                if (sel.Length > 0)
                 {
                     sel[0].Selected = true;
                 }
@@ -292,7 +309,8 @@ namespace Gen_Con_Hotel_Watch
 
             // get hotel from selection
             string hotelName = listViewHotels.SelectedItems[0].Name;
-            Hotel hotel = vacancies.Single(q => q.Name == hotelName);
+            Hotel hotel = vacancies?.SingleOrDefault(q => q.Name == hotelName);
+            if (hotel == null) return;
 
             BlockInfo selection = hotel.Blocks[0];
             textBoxOverallRate.Text = selection.Charge.ToString("C2");
@@ -423,19 +441,17 @@ namespace Gen_Con_Hotel_Watch
             // Determine whether the type being compared is a double.
             try
             {
-                // Parse the two objects passed as a parameter as a double.
                 double firstNumber = Double.Parse(((ListViewItem)x).SubItems[col].Text);
                 double secondNumber = Double.Parse(((ListViewItem)y).SubItems[col].Text);
-                // Compare the two numbers.
-                returnVal = (int)(firstNumber * 10 - secondNumber * 10); //multiplied by 10 to factor in rounding
+                returnVal = firstNumber.CompareTo(secondNumber);
             }
-            // If neither compared object has a valid double format, compare as a string.
-            catch
+            catch (FormatException)
             {
-                if (((ListViewItem)x).SubItems.Count != ((ListViewItem)y).SubItems.Count)
-                    return 1;
-                // Compare the two items as a string.
                 returnVal = String.Compare(((ListViewItem)x).SubItems[col].Text, ((ListViewItem)y).SubItems[col].Text);
+            }
+            catch (IndexOutOfRangeException)
+            {
+                return ((ListViewItem)x).SubItems.Count.CompareTo(((ListViewItem)y).SubItems.Count);
             }
 
             // Determine whether the sort order is descending.

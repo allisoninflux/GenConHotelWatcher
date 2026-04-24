@@ -63,6 +63,8 @@ namespace Gen_Con_Hotel_Watch.Notifications
 
         public static void SendNotifications(List<Hotel> hotels, bool sendEmail, bool showPopup)
         {
+            if (hotels == null || hotels.Count == 0) return;
+
             string popup = "";
             string emailBody = "";
             foreach (Hotel hotel in hotels)
