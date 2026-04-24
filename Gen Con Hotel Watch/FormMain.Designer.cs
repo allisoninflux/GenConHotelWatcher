@@ -90,6 +90,15 @@
             this.panelInput = new System.Windows.Forms.Panel();
             this.panelNotify = new System.Windows.Forms.Panel();
             this.panelResults = new System.Windows.Forms.Panel();
+            this.conventionGroupBox = new System.Windows.Forms.GroupBox();
+            this.labelConventionDates = new System.Windows.Forms.Label();
+            this.dateTimePickerStart = new System.Windows.Forms.DateTimePicker();
+            this.labelConventionTo = new System.Windows.Forms.Label();
+            this.dateTimePickerEnd = new System.Windows.Forms.DateTimePicker();
+            this.labelHotelSite = new System.Windows.Forms.Label();
+            this.textBoxHotelSite = new System.Windows.Forms.TextBox();
+            this.labelHousingSite = new System.Windows.Forms.Label();
+            this.textBoxHousingSite = new System.Windows.Forms.TextBox();
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDownGuests)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDownRooms)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDownSearch)).BeginInit();
@@ -106,6 +115,7 @@
             this.panelInput.SuspendLayout();
             this.panelNotify.SuspendLayout();
             this.panelResults.SuspendLayout();
+            this.conventionGroupBox.SuspendLayout();
             this.SuspendLayout();
             // 
             // buttonStart
@@ -318,7 +328,7 @@
             // buttonClose
             // 
             this.buttonClose.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.buttonClose.Location = new System.Drawing.Point(681, 653);
+            this.buttonClose.Location = new System.Drawing.Point(681, 773);
             this.buttonClose.Margin = new System.Windows.Forms.Padding(1);
             this.buttonClose.Name = "buttonClose";
             this.buttonClose.Size = new System.Drawing.Size(75, 23);
@@ -797,7 +807,7 @@
             this.tableLayoutPanel6.RowCount = 2;
             this.tableLayoutPanel6.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 40F));
             this.tableLayoutPanel6.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 60F));
-            this.tableLayoutPanel6.Size = new System.Drawing.Size(478, 642);
+            this.tableLayoutPanel6.Size = new System.Drawing.Size(478, 762);
             this.tableLayoutPanel6.TabIndex = 31;
             // 
             // tableLayoutPanel4
@@ -864,20 +874,107 @@
             // 
             this.comboBoxMap.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.comboBoxMap.FormattingEnabled = true;
-            this.comboBoxMap.Location = new System.Drawing.Point(440, 655);
+            this.comboBoxMap.Location = new System.Drawing.Point(440, 775);
             this.comboBoxMap.MaxDropDownItems = 16;
             this.comboBoxMap.Name = "comboBoxMap";
             this.comboBoxMap.Size = new System.Drawing.Size(237, 21);
             this.comboBoxMap.Sorted = true;
             this.comboBoxMap.TabIndex = 35;
             this.comboBoxMap.SelectedIndexChanged += new System.EventHandler(this.ComboBoxMap_SelectedIndexChanged);
-            // 
+            //
+            // conventionGroupBox
+            //
+            this.conventionGroupBox.Controls.Add(this.textBoxHousingSite);
+            this.conventionGroupBox.Controls.Add(this.labelHousingSite);
+            this.conventionGroupBox.Controls.Add(this.textBoxHotelSite);
+            this.conventionGroupBox.Controls.Add(this.labelHotelSite);
+            this.conventionGroupBox.Controls.Add(this.dateTimePickerEnd);
+            this.conventionGroupBox.Controls.Add(this.labelConventionTo);
+            this.conventionGroupBox.Controls.Add(this.dateTimePickerStart);
+            this.conventionGroupBox.Controls.Add(this.labelConventionDates);
+            this.conventionGroupBox.Location = new System.Drawing.Point(12, 7);
+            this.conventionGroupBox.Name = "conventionGroupBox";
+            this.conventionGroupBox.Size = new System.Drawing.Size(260, 110);
+            this.conventionGroupBox.TabIndex = 39;
+            this.conventionGroupBox.TabStop = false;
+            this.conventionGroupBox.Text = "Convention Settings";
+            //
+            // labelConventionDates
+            //
+            this.labelConventionDates.AutoSize = true;
+            this.labelConventionDates.Location = new System.Drawing.Point(5, 22);
+            this.labelConventionDates.Name = "labelConventionDates";
+            this.labelConventionDates.TabIndex = 0;
+            this.labelConventionDates.Text = "Dates:";
+            //
+            // dateTimePickerStart
+            //
+            this.dateTimePickerStart.Format = System.Windows.Forms.DateTimePickerFormat.Short;
+            this.dateTimePickerStart.Location = new System.Drawing.Point(53, 18);
+            this.dateTimePickerStart.Name = "dateTimePickerStart";
+            this.dateTimePickerStart.Size = new System.Drawing.Size(88, 20);
+            this.dateTimePickerStart.TabIndex = 1;
+            this.dateTimePickerStart.Value = new System.DateTime(2016, 8, 4, 0, 0, 0, 0);
+            this.dateTimePickerStart.ValueChanged += new System.EventHandler(this.ConventionSettings_Changed);
+            //
+            // labelConventionTo
+            //
+            this.labelConventionTo.AutoSize = true;
+            this.labelConventionTo.Location = new System.Drawing.Point(145, 22);
+            this.labelConventionTo.Name = "labelConventionTo";
+            this.labelConventionTo.TabIndex = 2;
+            this.labelConventionTo.Text = "to";
+            //
+            // dateTimePickerEnd
+            //
+            this.dateTimePickerEnd.Format = System.Windows.Forms.DateTimePickerFormat.Short;
+            this.dateTimePickerEnd.Location = new System.Drawing.Point(165, 18);
+            this.dateTimePickerEnd.Name = "dateTimePickerEnd";
+            this.dateTimePickerEnd.Size = new System.Drawing.Size(88, 20);
+            this.dateTimePickerEnd.TabIndex = 3;
+            this.dateTimePickerEnd.Value = new System.DateTime(2016, 8, 7, 0, 0, 0, 0);
+            this.dateTimePickerEnd.ValueChanged += new System.EventHandler(this.ConventionSettings_Changed);
+            //
+            // labelHotelSite
+            //
+            this.labelHotelSite.AutoSize = true;
+            this.labelHotelSite.Location = new System.Drawing.Point(5, 48);
+            this.labelHotelSite.Name = "labelHotelSite";
+            this.labelHotelSite.TabIndex = 4;
+            this.labelHotelSite.Text = "Hotel URL:";
+            //
+            // textBoxHotelSite
+            //
+            this.textBoxHotelSite.Location = new System.Drawing.Point(75, 45);
+            this.textBoxHotelSite.Name = "textBoxHotelSite";
+            this.textBoxHotelSite.Size = new System.Drawing.Size(178, 20);
+            this.textBoxHotelSite.TabIndex = 5;
+            this.textBoxHotelSite.Text = "https://aws.passkey.com/event/14276138/owner/10909638/rooms/select";
+            this.textBoxHotelSite.TextChanged += new System.EventHandler(this.ConventionSettings_Changed);
+            //
+            // labelHousingSite
+            //
+            this.labelHousingSite.AutoSize = true;
+            this.labelHousingSite.Location = new System.Drawing.Point(5, 74);
+            this.labelHousingSite.Name = "labelHousingSite";
+            this.labelHousingSite.TabIndex = 6;
+            this.labelHousingSite.Text = "Housing URL:";
+            //
+            // textBoxHousingSite
+            //
+            this.textBoxHousingSite.Location = new System.Drawing.Point(75, 71);
+            this.textBoxHousingSite.Name = "textBoxHousingSite";
+            this.textBoxHousingSite.Size = new System.Drawing.Size(178, 20);
+            this.textBoxHousingSite.TabIndex = 7;
+            this.textBoxHousingSite.Text = "https://aws.passkey.com/reg/{0}/null/null/1/0/null";
+            this.textBoxHousingSite.TextChanged += new System.EventHandler(this.ConventionSettings_Changed);
+            //
             // panelInput
-            // 
+            //
             this.panelInput.AutoSize = true;
             this.panelInput.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
             this.panelInput.Controls.Add(this.tableLayoutPanel3);
-            this.panelInput.Location = new System.Drawing.Point(12, 7);
+            this.panelInput.Location = new System.Drawing.Point(12, 127);
             this.panelInput.Name = "panelInput";
             this.panelInput.Size = new System.Drawing.Size(260, 315);
             this.panelInput.TabIndex = 36;
@@ -887,7 +984,7 @@
             this.panelNotify.AutoSize = true;
             this.panelNotify.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
             this.panelNotify.Controls.Add(this.tableLayoutPanelNotification);
-            this.panelNotify.Location = new System.Drawing.Point(12, 328);
+            this.panelNotify.Location = new System.Drawing.Point(12, 448);
             this.panelNotify.Name = "panelNotify";
             this.panelNotify.Size = new System.Drawing.Size(260, 115);
             this.panelNotify.TabIndex = 37;
@@ -896,7 +993,7 @@
             // 
             this.panelResults.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
             this.panelResults.Controls.Add(this.tableLayoutPanel5);
-            this.panelResults.Location = new System.Drawing.Point(12, 449);
+            this.panelResults.Location = new System.Drawing.Point(12, 569);
             this.panelResults.Name = "panelResults";
             this.panelResults.Size = new System.Drawing.Size(260, 222);
             this.panelResults.TabIndex = 38;
@@ -907,17 +1004,18 @@
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.CancelButton = this.buttonStop;
-            this.ClientSize = new System.Drawing.Size(763, 683);
+            this.ClientSize = new System.Drawing.Size(763, 803);
             this.Controls.Add(this.panelResults);
             this.Controls.Add(this.panelNotify);
             this.Controls.Add(this.panelInput);
+            this.Controls.Add(this.conventionGroupBox);
             this.Controls.Add(this.comboBoxMap);
             this.Controls.Add(this.tableLayoutPanel6);
             this.Controls.Add(this.buttonClose);
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedSingle;
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.MaximizeBox = false;
-            this.MinimumSize = new System.Drawing.Size(650, 658);
+            this.MinimumSize = new System.Drawing.Size(650, 778);
             this.Name = "MainForm";
             this.Text = "Gen Con Hotel Search";
             this.Load += new System.EventHandler(this.FormSearch_Load);
@@ -944,14 +1042,11 @@
             this.panelNotify.ResumeLayout(false);
             this.panelNotify.PerformLayout();
             this.panelResults.ResumeLayout(false);
+            this.conventionGroupBox.ResumeLayout(false);
+            this.conventionGroupBox.PerformLayout();
             this.ResumeLayout(false);
             this.PerformLayout();
 
-        }
-
-        private void ListViewHotels_ItemSelectionChanged(object sender, System.Windows.Forms.ListViewItemSelectionChangedEventArgs e)
-        {
-            throw new System.NotImplementedException();
         }
 
         #endregion
@@ -1016,6 +1111,15 @@
         private System.Windows.Forms.Panel panelInput;
         private System.Windows.Forms.Panel panelNotify;
         private System.Windows.Forms.Panel panelResults;
+        private System.Windows.Forms.GroupBox conventionGroupBox;
+        private System.Windows.Forms.Label labelConventionDates;
+        private System.Windows.Forms.DateTimePicker dateTimePickerStart;
+        private System.Windows.Forms.Label labelConventionTo;
+        private System.Windows.Forms.DateTimePicker dateTimePickerEnd;
+        private System.Windows.Forms.Label labelHotelSite;
+        private System.Windows.Forms.TextBox textBoxHotelSite;
+        private System.Windows.Forms.Label labelHousingSite;
+        private System.Windows.Forms.TextBox textBoxHousingSite;
     }
 }
 

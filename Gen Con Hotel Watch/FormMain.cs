@@ -28,13 +28,13 @@ namespace Gen_Con_Hotel_Watch
 {
     public partial class MainForm : Form
     {
-        public static string hotelSite = "https://aws.passkey.com/event/14276138/owner/10909638/rooms/select";
-        public static string housingSite = "https://aws.passkey.com/reg/{0}/null/null/1/0/null";
+        public static string hotelSite;
+        public static string housingSite;
 
         private string title = "Gen Con Hotel Search";
         private string key;
-        private DateTime FirstNightAvailable = new DateTime(2016, 8, 4);
-        private DateTime LastNightAvailable = new DateTime(2016, 8, 7);
+        private DateTime FirstNightAvailable;
+        private DateTime LastNightAvailable;
 
         private int maxCounter = 0;
         private int maxNotifications;
@@ -82,6 +82,22 @@ namespace Gen_Con_Hotel_Watch
         {
             comboBoxUnits.Text = "blocks";
             numericUpDownMaxNotify.Value = 5;
+            ApplyConventionSettings();
+        }
+
+        private void ApplyConventionSettings()
+        {
+            hotelSite = textBoxHotelSite.Text;
+            housingSite = textBoxHousingSite.Text;
+            FirstNightAvailable = dateTimePickerStart.Value.Date;
+            LastNightAvailable = dateTimePickerEnd.Value.Date;
+            monthCalendarSelection.MinDate = FirstNightAvailable;
+            monthCalendarSelection.MaxDate = LastNightAvailable;
+        }
+
+        private void ConventionSettings_Changed(object sender, EventArgs e)
+        {
+            ApplyConventionSettings();
         }
 
         private HotelFilter GetHotelFilter()
@@ -132,6 +148,7 @@ namespace Gen_Con_Hotel_Watch
 
         private async void Button_Start_Click(object sender, EventArgs e)
         {
+            housingSite = textBoxHousingSite.Text;
             if (!VerifyKey(textBoxKey.Text)) return;
 
             ClearForm();
