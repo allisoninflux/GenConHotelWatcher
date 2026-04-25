@@ -16,25 +16,12 @@
  */
 using Gen_Con_Hotel_Watch.Hotels.Info;
 using Newtonsoft.Json;
-using System.Collections;
 
 namespace Gen_Con_Hotel_Watch.Hotels
 {
     [JsonObject]
-    public class Hotel : IEnumerable
+    public class Hotel
     {
-        IEnumerator IEnumerable.GetEnumerator()
-        {
-            return GetEnumerator();
-        }
-        public IEnumerator GetEnumerator()
-        {
-            foreach (Hotel item in this)
-            {
-                yield return item;
-            }
-        }
-
         public Address Address { get; set; }
         public string Description { get; set; }
         public string Url { get; set; }

@@ -23,18 +23,23 @@ using System.Linq;
 using System.IO;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using Gen_Con_Hotel_Watch.Hotels;
+using Gen_Con_Hotel_Watch.Hotels.Info;
+using Gen_Con_Hotel_Watch.Map;
+using Gen_Con_Hotel_Watch.Notifications;
+using ScraperClass = Gen_Con_Hotel_Watch.Scraper.Scraper;
 
 namespace Gen_Con_Hotel_Watch
 {
     public partial class MainForm : Form
     {
-        public static string hotelSite = "https://aws.passkey.com/event/14276138/owner/10909638/rooms/select";
-        public static string housingSite = "https://aws.passkey.com/reg/{0}/null/null/1/0/null";
+        public static string hotelSite;
+        public static string housingSite;
 
         private string title = "Gen Con Hotel Search";
         private string key;
-        private DateTime FirstNightAvailable = new DateTime(2016, 8, 4);
-        private DateTime LastNightAvailable = new DateTime(2016, 8, 7);
+        private DateTime FirstNightAvailable;
+        private DateTime LastNightAvailable;
 
         private int maxCounter = 0;
         private int maxNotifications;
@@ -82,13 +87,29 @@ namespace Gen_Con_Hotel_Watch
         {
             comboBoxUnits.Text = "blocks";
             numericUpDownMaxNotify.Value = 5;
+            ApplyConventionSettings();
         }
 
-        private HotelFilter GetHotelFilter()
+        private void ApplyConventionSettings()
+        {
+            hotelSite = textBoxHotelSite.Text;
+            housingSite = textBoxHousingSite.Text;
+            FirstNightAvailable = dateTimePickerStart.Value.Date;
+            LastNightAvailable = dateTimePickerEnd.Value.Date;
+            monthCalendarSelection.MinDate = FirstNightAvailable;
+            monthCalendarSelection.MaxDate = LastNightAvailable;
+        }
+
+        private void ConventionSettings_Changed(object sender, EventArgs e)
+        {
+            ApplyConventionSettings();
+        }
+
+        private Filter GetFilter()
         {
             DateTime CheckInDate = monthCalendarSelection.SelectionStart;
             DateTime CheckOutDate = monthCalendarSelection.SelectionEnd;
-            if ((CheckInDate > FirstNightAvailable) | (CheckOutDate < LastNightAvailable))
+            if ((CheckInDate > FirstNightAvailable) || (CheckOutDate < LastNightAvailable))
             {
                 string message = String.Format("{0} is the latest available check in date and \r" +
                     "{1} is the earliest available check out.\r" +
@@ -100,7 +121,7 @@ namespace Gen_Con_Hotel_Watch
                 return null;
             }
 
-            HotelFilter info = new HotelFilter()
+            Filter info = new Filter()
             {
                 NumOfGuests = (int)numericUpDownGuests.Value,
                 NumOfRooms = (int)numericUpDownRooms.Value,
@@ -117,7 +138,7 @@ namespace Gen_Con_Hotel_Watch
 
         private bool VerifyKey(string key)
         {
-            if (key != null || key == "")
+            if (string.IsNullOrEmpty(key))
             {
                 MessageBox.Show("Please enter your hotel access key.");
                 return false;
@@ -132,13 +153,30 @@ namespace Gen_Con_Hotel_Watch
 
         private async void Button_Start_Click(object sender, EventArgs e)
         {
+            housingSite = textBoxHousingSite.Text;
             if (!VerifyKey(textBoxKey.Text)) return;
 
             ClearForm();
 
-            HotelFilter filter = GetHotelFilter();
+            Filter filter = GetFilter();
+            if (filter == null) return;
 
-            vacancies = await Scraper.FindHotels(key, filter);
+            try
+            {
+                vacancies = await ScraperClass.FindHotels(key, filter);
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("Error searching hotels: " + ex.Message);
+                EnableControls();
+                return;
+            }
+
+            if (vacancies == null || vacancies.Count == 0)
+            {
+                MessageBox.Show("No hotels found or the connection failed.");
+                return;
+            }
 
             AddHotelsToDisplay(vacancies);
 
@@ -214,7 +252,7 @@ namespace Gen_Con_Hotel_Watch
                 hotelItem.SubItems.Add(distUnit);
 
                 // Lookup breakfast and parking and add it to the list
-                HotelData data = HotelData.data.Find(x => x.Name.Equals(hotel.Name));
+                Data data = HotelManager.HotelList.Find(x => x.Name.Equals(hotel.Name));
                 hotelItem.SubItems.Add(data.Breakfast ? "yes" : "no");
                 hotelItem.SubItems.Add(data.Parking ? "yes" : "no");
 
@@ -238,9 +276,10 @@ namespace Gen_Con_Hotel_Watch
 
                 float latitude = (float)position.Lat;
                 float longitude = (float)position.Lng;
-                Hotel foundHotel = vacancies.Single(x => x.Latitude == latitude && x.Longitude == longitude);
+                Hotel foundHotel = vacancies.SingleOrDefault(x => x.Latitude == latitude && x.Longitude == longitude);
+                if (foundHotel == null) return;
                 ListViewItem[] sel = listViewHotels.Items.Find(foundHotel.Name, false);
-                if (sel != null)
+                if (sel.Length > 0)
                 {
                     sel[0].Selected = true;
                 }
@@ -292,7 +331,8 @@ namespace Gen_Con_Hotel_Watch
 
             // get hotel from selection
             string hotelName = listViewHotels.SelectedItems[0].Name;
-            Hotel hotel = vacancies.Single(q => q.Name == hotelName);
+            Hotel hotel = vacancies?.SingleOrDefault(q => q.Name == hotelName);
+            if (hotel == null) return;
 
             BlockInfo selection = hotel.Blocks[0];
             textBoxOverallRate.Text = selection.Charge.ToString("C2");
@@ -423,19 +463,17 @@ namespace Gen_Con_Hotel_Watch
             // Determine whether the type being compared is a double.
             try
             {
-                // Parse the two objects passed as a parameter as a double.
                 double firstNumber = Double.Parse(((ListViewItem)x).SubItems[col].Text);
                 double secondNumber = Double.Parse(((ListViewItem)y).SubItems[col].Text);
-                // Compare the two numbers.
-                returnVal = (int)(firstNumber * 10 - secondNumber * 10); //multiplied by 10 to factor in rounding
+                returnVal = firstNumber.CompareTo(secondNumber);
             }
-            // If neither compared object has a valid double format, compare as a string.
-            catch
+            catch (FormatException)
             {
-                if (((ListViewItem)x).SubItems.Count != ((ListViewItem)y).SubItems.Count)
-                    return 1;
-                // Compare the two items as a string.
                 returnVal = String.Compare(((ListViewItem)x).SubItems[col].Text, ((ListViewItem)y).SubItems[col].Text);
+            }
+            catch (IndexOutOfRangeException)
+            {
+                return ((ListViewItem)x).SubItems.Count.CompareTo(((ListViewItem)y).SubItems.Count);
             }
 
             // Determine whether the sort order is descending.

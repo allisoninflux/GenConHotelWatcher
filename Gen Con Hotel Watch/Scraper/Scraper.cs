@@ -34,6 +34,9 @@ namespace Gen_Con_Hotel_Watch.Scraper
             // Scrape the information from the website
             string searchResults = await ScrapeHotelInfo(key, filter);
 
+            if (string.IsNullOrEmpty(searchResults))
+                return new List<Hotel>();
+
             // Find available vacancies
             return ParseHotels(searchResults);
         }
@@ -84,8 +87,10 @@ namespace Gen_Con_Hotel_Watch.Scraper
                 })
                 {
                     HttpResponseMessage hotelResponse = await hotelClient.PostAsync(HotelsAddress, query);
-                    if (!hotelResponse.IsSuccessStatusCode)
+                    if (hotelResponse.IsSuccessStatusCode)
                         return await hotelResponse.Content.ReadAsStringAsync();
+                    else
+                        return null;
                 }
                 #endregion
             }
@@ -112,18 +117,37 @@ namespace Gen_Con_Hotel_Watch.Scraper
         {
             HtmlAgilityPack.HtmlDocument doc = new HtmlAgilityPack.HtmlDocument();
             doc.LoadHtml(response);
-            string results = doc.DocumentNode.Descendants().Single(x => x.Id == "last-search-results").InnerHtml;
-            results = @"{""hotels"":" + results + "}";
-            List<Hotel> hotels = JsonConvert.DeserializeObject<List<Hotel>>(results);
+
+            var node = doc.DocumentNode.Descendants().SingleOrDefault(x => x.Id == "last-search-results");
+            if (node == null)
+            {
+                MessageBox.Show("Could not find hotel data in the response. The page format may have changed.");
+                return new List<Hotel>();
+            }
+
+            string results = @"{""hotels"":" + node.InnerHtml + "}";
+
+            List<Hotel> hotels;
+            try
+            {
+                hotels = JsonConvert.DeserializeObject<List<Hotel>>(results);
+            }
+            catch (JsonException ex)
+            {
+                MessageBox.Show("Failed to parse hotel data: " + ex.Message);
+                return new List<Hotel>();
+            }
+
+            List<Hotel> filtered = new List<Hotel>();
             foreach (Hotel hotel in hotels)
             {
                 if (hotel.Blocks.Length > 0)
                 {
                     hotel.Name = HotelManager.GetPrettyName(hotel.Name);
-                    hotels.Add(hotel);
+                    filtered.Add(hotel);
                 }
             }
-            return hotels;
+            return filtered;
         }
 
     }
