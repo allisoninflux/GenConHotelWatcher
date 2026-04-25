@@ -849,7 +849,7 @@
             this.myMap.EmptyTileColor = System.Drawing.Color.Navy;
             this.myMap.GrayScaleMode = false;
             this.myMap.HelperLineOption = GMap.NET.WindowsForms.HelperLineOptions.DontShow;
-            this.myMap.LevelsKeepInMemmory = 5;
+            this.myMap.LevelsKeepInMemory = 5;
             this.myMap.Location = new System.Drawing.Point(4, 260);
             this.myMap.MarkersEnabled = true;
             this.myMap.MaxZoom = 18;

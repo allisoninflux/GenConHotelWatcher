@@ -50,7 +50,7 @@ namespace Gen_Con_Hotel_Watch.Map
             this.map = map;
 
             // Specifiying the map provider and center location
-            map.MapProvider = GMap.NET.MapProviders.OviMapProvider.Instance;
+            map.MapProvider = GMap.NET.MapProviders.BingMapProvider.Instance;
             GMaps.Instance.Mode = AccessMode.ServerOnly;
             map.Position = new PointLatLng(39.764386, -86.164050); // Center map on Indianapolis
             map.ShowCenter = false;
@@ -74,8 +74,8 @@ namespace Gen_Con_Hotel_Watch.Map
             map.Select();
 
             // initialize the combo bo
-            comboBox.Items.Add(OviHybridMapProvider.Instance);
-            comboBox.Items.Add(OviMapProvider.Instance);
+            comboBox.Items.Add(BingMapProvider.Instance);
+            comboBox.Items.Add(BingSatelliteMapProvider.Instance);
             comboBox.SelectedText = map.MapProvider.Name;
         }
 

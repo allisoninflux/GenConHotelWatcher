@@ -23,6 +23,11 @@ using System.Linq;
 using System.IO;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using Gen_Con_Hotel_Watch.Hotels;
+using Gen_Con_Hotel_Watch.Hotels.Info;
+using Gen_Con_Hotel_Watch.Map;
+using Gen_Con_Hotel_Watch.Notifications;
+using ScraperClass = Gen_Con_Hotel_Watch.Scraper.Scraper;
 
 namespace Gen_Con_Hotel_Watch
 {
@@ -100,7 +105,7 @@ namespace Gen_Con_Hotel_Watch
             ApplyConventionSettings();
         }
 
-        private HotelFilter GetHotelFilter()
+        private Filter GetFilter()
         {
             DateTime CheckInDate = monthCalendarSelection.SelectionStart;
             DateTime CheckOutDate = monthCalendarSelection.SelectionEnd;
@@ -116,7 +121,7 @@ namespace Gen_Con_Hotel_Watch
                 return null;
             }
 
-            HotelFilter info = new HotelFilter()
+            Filter info = new Filter()
             {
                 NumOfGuests = (int)numericUpDownGuests.Value,
                 NumOfRooms = (int)numericUpDownRooms.Value,
@@ -153,12 +158,12 @@ namespace Gen_Con_Hotel_Watch
 
             ClearForm();
 
-            HotelFilter filter = GetHotelFilter();
+            Filter filter = GetFilter();
             if (filter == null) return;
 
             try
             {
-                vacancies = await Scraper.FindHotels(key, filter);
+                vacancies = await ScraperClass.FindHotels(key, filter);
             }
             catch (Exception ex)
             {
@@ -247,7 +252,7 @@ namespace Gen_Con_Hotel_Watch
                 hotelItem.SubItems.Add(distUnit);
 
                 // Lookup breakfast and parking and add it to the list
-                HotelData data = HotelData.data.Find(x => x.Name.Equals(hotel.Name));
+                Data data = HotelManager.HotelList.Find(x => x.Name.Equals(hotel.Name));
                 hotelItem.SubItems.Add(data.Breakfast ? "yes" : "no");
                 hotelItem.SubItems.Add(data.Parking ? "yes" : "no");
 
